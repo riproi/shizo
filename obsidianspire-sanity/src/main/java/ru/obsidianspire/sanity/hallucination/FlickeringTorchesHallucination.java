@@ -51,9 +51,9 @@ public class FlickeringTorchesHallucination extends Hallucination {
                 if (!torches.isEmpty()) {
                     Block randomTorch = torches.get(rand.nextInt(torches.size()));
 
-                    // Send block change packet (Redstone Torch)
+                    // Send block change packet to hide it
                     Material oldType = randomTorch.getType();
-                    Material newType = oldType == Material.WALL_TORCH ? Material.REDSTONE_WALL_TORCH : Material.REDSTONE_TORCH;
+                    Material newType = Material.AIR;
 
                     player.sendBlockChange(randomTorch.getLocation(), newType.createBlockData());
 

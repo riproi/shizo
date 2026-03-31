@@ -52,7 +52,7 @@ public class SanityManager {
 
             // 1. Darkness: Light level below 7 (-1% per minute)
             if (player.getLocation().getBlock().getLightLevel() < 7) {
-                sanityChange -= 1.0;
+                sanityChange -= plugin.getConfigManager().sanityDropDarkness;
             }
 
             // 2. Isolation: No players in 50 blocks for 10 minutes (-5% per cycle)
@@ -68,7 +68,7 @@ public class SanityManager {
             if (isIsolated) {
                 long isolatedTime = System.currentTimeMillis() - data.getLastTimeIsolated();
                 if (isolatedTime >= 10 * 60 * 1000) { // 10 minutes
-                    sanityChange -= 5.0;
+                    sanityChange -= plugin.getConfigManager().sanityDropIsolation;
                     data.setLastTimeIsolated(System.currentTimeMillis()); // Reset timer after hit
                 }
             } else {
@@ -89,7 +89,7 @@ public class SanityManager {
             }
 
             if (groupTherapy) {
-                sanityChange += 5.0;
+                sanityChange += plugin.getConfigManager().sanityHealGroupTherapy;
             }
 
             if (sanityChange != 0.0) {

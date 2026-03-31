@@ -10,8 +10,14 @@ import org.bukkit.inventory.ItemStack;
 import ru.obsidianspire.sanity.ObsidianSpireSanity;
 import ru.obsidianspire.sanity.data.PlayerData;
 import ru.obsidianspire.sanity.manager.MedicineManager;
+import org.bukkit.command.TabCompleter;
 
-public class MedicineCommand implements CommandExecutor {
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class MedicineCommand implements CommandExecutor, TabCompleter {
     private final ObsidianSpireSanity plugin;
 
     public MedicineCommand(ObsidianSpireSanity plugin) {
@@ -75,5 +81,40 @@ public class MedicineCommand implements CommandExecutor {
         sender.sendMessage(ChatColor.GREEN + "Gave " + type.name() + " to " + target.getName() + ".");
 
         return true;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        if (!sender.hasPermission("obsidianspire.sanity.admin")) {
+            return new ArrayList<>();
+        }
+
+        if (args.length == 1) {
+            return Arrays.asList("give", "stats").stream()
+                    .filter(s -> s.startsWith(args[0].toLowerCase()))
+                    .collect(Collectors.toList());
+        }
+
+        if (args.length == 2) {
+            if (args[0].equalsIgnoreCase("give")) {
+                return Arrays.asList("aminazine", "haloperidol", "clozapine", "tea").stream()
+                        .filter(s -> s.startsWith(args[1].toLowerCase()))
+                        .collect(Collectors.toList());
+            } else if (args[0].equalsIgnoreCase("stats")) {
+                return Bukkit.getOnlinePlayers().stream()
+                        .map(Player::getName)
+                        .filter(s -> s.toLowerCase().startsWith(args[1].toLowerCase()))
+                        .collect(Collectors.toList());
+            }
+        }
+
+        if (args.length == 3 && args[0].equalsIgnoreCase("give")) {
+            return Bukkit.getOnlinePlayers().stream()
+                    .map(Player::getName)
+                    .filter(s -> s.toLowerCase().startsWith(args[2].toLowerCase()))
+                    .collect(Collectors.toList());
+        }
+
+        return new ArrayList<>();
     }
 }

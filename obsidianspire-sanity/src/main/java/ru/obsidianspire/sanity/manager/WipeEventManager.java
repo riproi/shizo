@@ -75,6 +75,7 @@ public class WipeEventManager {
             @Override
             public void run() {
                 if (player.isOnline()) {
+                    player.setBedSpawnLocation(whiteRoomWorld.getSpawnLocation(), true);
                     player.teleport(whiteRoomWorld.getSpawnLocation());
                     player.setGameMode(GameMode.ADVENTURE);
                     player.getInventory().clear();
@@ -93,8 +94,9 @@ public class WipeEventManager {
     }
 
     private void setupWhiteRoom() {
-        if (Bukkit.getWorld("sanity_white_room") == null) {
-            WorldCreator creator = new WorldCreator("sanity_white_room");
+        String worldName = plugin.getConfigManager().whiteRoomWorldName;
+        if (Bukkit.getWorld(worldName) == null) {
+            WorldCreator creator = new WorldCreator(worldName);
             creator.type(WorldType.FLAT);
             creator.generatorSettings("{\"structures\": {\"structures\": {}}, \"layers\": [{\"block\": \"minecraft:white_concrete\", \"height\": 64}], \"biome\": \"minecraft:the_void\"}");
             creator.generateStructures(false);
@@ -110,7 +112,7 @@ public class WipeEventManager {
                 whiteRoomWorld.setSpawnLocation(0, 65, 0);
             }
         } else {
-            whiteRoomWorld = Bukkit.getWorld("sanity_white_room");
+            whiteRoomWorld = Bukkit.getWorld(worldName);
         }
     }
 }

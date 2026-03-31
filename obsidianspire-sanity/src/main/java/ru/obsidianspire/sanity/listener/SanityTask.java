@@ -48,7 +48,7 @@ public class SanityTask extends BukkitRunnable {
                     darkStareStart.put(player.getUniqueId(), System.currentTimeMillis());
                 } else if (System.currentTimeMillis() - darkStart >= 180000) { // 3 minutes
                     if (data != null && !data.isAminazineActive() && !data.isClozapineActive()) {
-                        data.removeSanity(2.0);
+                        data.removeSanity(plugin.getConfigManager().sanityDropDarkStare);
                         darkStareStart.put(player.getUniqueId(), System.currentTimeMillis()); // reset
                     }
                 }
@@ -79,6 +79,10 @@ public class SanityTask extends BukkitRunnable {
 
     private final java.util.Map<java.util.UUID, Long> darkStareStart = new java.util.HashMap<>();
 
+    public void removePlayerFromDarkStare(java.util.UUID uuid) {
+        darkStareStart.remove(uuid);
+    }
+
     private void triggerRandomHallucinationFor(Player player, SanityManager.SanityStage stage) {
         double rand = Math.random();
 
@@ -102,30 +106,40 @@ public class SanityTask extends BukkitRunnable {
                 }
                 break;
             case PSYCHOSIS: // 30-49
-                if (rand < 0.1) {
+                double baseP = 0.1; // phantom pursuit base
+                double currP = baseP;
+
+                if (rand < currP) {
+                    plugin.getHallucinationManager().triggerSpecificHallucination(player, "phantom1_pursuit");
+                } else if (rand < (currP += plugin.getConfigManager().chancePsychosisFalseDeath)) {
                     plugin.getHallucinationManager().triggerSpecificHallucination(player, "false_death");
-                } else if (rand < 0.2) {
+                } else if (rand < (currP += plugin.getConfigManager().chancePsychosisHeavyGlance)) {
                     plugin.getHallucinationManager().triggerSpecificHallucination(player, "heavy_glance");
-                } else if (rand < 0.3) {
+                } else if (rand < (currP += plugin.getConfigManager().chancePsychosisFlickeringTorches)) {
                     plugin.getHallucinationManager().triggerSpecificHallucination(player, "flickering_torches");
-                } else if (rand < 0.4) {
+                } else if (rand < (currP += plugin.getConfigManager().chancePsychosisEyesCrowd)) {
                     plugin.getHallucinationManager().triggerSpecificHallucination(player, "eyes_in_the_crowd");
-                } else if (rand < 0.5) {
+                } else if (rand < (currP += plugin.getConfigManager().chancePsychosisPhantomHunger)) {
                     plugin.getHallucinationManager().triggerSpecificHallucination(player, "phantom_hunger");
                 }
                 break;
             case COLLAPSE: // 0-29
-                if (rand < 0.15) {
+                double baseC = 0.15; // phantom pursuit base
+                double currC = baseC;
+
+                if (rand < currC) {
+                    plugin.getHallucinationManager().triggerSpecificHallucination(player, "phantom1_pursuit");
+                } else if (rand < (currC += plugin.getConfigManager().chanceCollapseFalseDeath)) {
                     plugin.getHallucinationManager().triggerSpecificHallucination(player, "false_death");
-                } else if (rand < 0.3) {
+                } else if (rand < (currC += plugin.getConfigManager().chanceCollapseHeavyGlance)) {
                     plugin.getHallucinationManager().triggerSpecificHallucination(player, "heavy_glance");
-                } else if (rand < 0.45) {
+                } else if (rand < (currC += plugin.getConfigManager().chanceCollapsePanicExplosion)) {
                     plugin.getHallucinationManager().triggerSpecificHallucination(player, "panic_explosion");
-                } else if (rand < 0.6) {
+                } else if (rand < (currC += plugin.getConfigManager().chanceCollapsePhantomFire)) {
                     plugin.getHallucinationManager().triggerSpecificHallucination(player, "phantom_fire");
-                } else if (rand < 0.75) {
+                } else if (rand < (currC += plugin.getConfigManager().chanceCollapseFalseInventory)) {
                     plugin.getHallucinationManager().triggerSpecificHallucination(player, "false_inventory");
-                } else if (rand < 0.9) {
+                } else {
                     plugin.getHallucinationManager().triggerSpecificHallucination(player, "chest_scream");
                 }
                 break;

@@ -24,7 +24,11 @@ public class HallucinationManager {
         Hallucination hallucination = null;
         switch (type.toLowerCase()) {
             case "phantom1":
-                hallucination = new Phantom1Hallucination(plugin, player);
+            case "phantom1_pursuit":
+                hallucination = new Phantom1PursuitHallucination(plugin, player);
+                break;
+            case "phantom1_nightmare":
+                hallucination = new Phantom1NightmareHallucination(plugin, player);
                 break;
             case "false_death":
                 hallucination = new FalseDeathHallucination(plugin, player);

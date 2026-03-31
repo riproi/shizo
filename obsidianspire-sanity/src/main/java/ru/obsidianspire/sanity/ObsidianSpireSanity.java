@@ -32,10 +32,14 @@ public class ObsidianSpireSanity extends JavaPlugin {
     private ru.obsidianspire.sanity.hallucination.HallucinationManager hallucinationManager;
     private ru.obsidianspire.sanity.listener.SanityListener sanityListener;
     private ru.obsidianspire.sanity.listener.SanityTask sanityTask;
+    private ru.obsidianspire.sanity.config.ConfigManager configManager;
 
     @Override
     public void onEnable() {
         instance = this;
+
+        // Configuration
+        this.configManager = new ru.obsidianspire.sanity.config.ConfigManager(this);
 
         // Initialize Database
         this.dataProvider = new SQLiteProvider(this);
@@ -111,6 +115,10 @@ public class ObsidianSpireSanity extends JavaPlugin {
         return playerDataCache;
     }
 
+    public ru.obsidianspire.sanity.config.ConfigManager getConfigManager() {
+        return configManager;
+    }
+
     public ru.obsidianspire.sanity.manager.SanityManager getSanityManager() {
         return sanityManager;
     }
@@ -125,6 +133,10 @@ public class ObsidianSpireSanity extends JavaPlugin {
 
     public ru.obsidianspire.sanity.hallucination.HallucinationManager getHallucinationManager() {
         return hallucinationManager;
+    }
+
+    public ru.obsidianspire.sanity.listener.SanityTask getSanityTask() {
+        return sanityTask;
     }
 
     private void registerProtocolLibAdapters() {

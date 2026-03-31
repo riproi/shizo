@@ -9,12 +9,17 @@ import org.bukkit.entity.Player;
 import ru.obsidianspire.sanity.ObsidianSpireSanity;
 import ru.obsidianspire.sanity.data.PlayerData;
 import ru.obsidianspire.sanity.manager.SanityManager;
+import org.bukkit.command.TabCompleter;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
-public class SanityCommand implements CommandExecutor {
+public class SanityCommand implements CommandExecutor, TabCompleter {
     private final ObsidianSpireSanity plugin;
     private final Map<UUID, Long> wipeConfirmations = new HashMap<>();
 
@@ -121,5 +126,33 @@ public class SanityCommand implements CommandExecutor {
         }
 
         return true;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        if (!sender.hasPermission("obsidianspire.sanity.admin")) {
+            return new ArrayList<>();
+        }
+
+        if (args.length == 1) {
+            return Arrays.asList("set", "add", "remove", "get", "wipe_event").stream()
+                    .filter(s -> s.startsWith(args[0].toLowerCase()))
+                    .collect(Collectors.toList());
+        }
+
+        if (args.length == 2) {
+            if (args[0].equalsIgnoreCase("wipe_event")) {
+                return Arrays.asList("start", "confirm").stream()
+                        .filter(s -> s.startsWith(args[1].toLowerCase()))
+                        .collect(Collectors.toList());
+            } else {
+                return Bukkit.getOnlinePlayers().stream()
+                        .map(Player::getName)
+                        .filter(s -> s.toLowerCase().startsWith(args[1].toLowerCase()))
+                        .collect(Collectors.toList());
+            }
+        }
+
+        return new ArrayList<>();
     }
 }

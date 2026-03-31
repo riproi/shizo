@@ -1,0 +1,32 @@
+wipe_event:
+  world_name: "sanity_white_room"
+
+sanity:
+  drops:
+    darkness_per_min: 1.0
+    isolation_per_10min: 5.0
+    insomnia_per_night: 5.0
+    enderman_look: 10.0
+    phantom1_contact: 10.0
+    staring_into_darkness_3min: 2.0
+  heals:
+    healthy_sleep: 15.0
+    group_therapy_per_min: 5.0
+
+texts:
+  phantom1_pursuit: "§cЭто всего лишь сон..."
+  phantom1_nightmare: "§cТолько не снова..."
+
+chances:
+  psychosis:
+    false_death: 0.1
+    heavy_glance: 0.1
+    flickering_torches: 0.1
+    eyes_in_the_crowd: 0.1
+    phantom_hunger: 0.1
+  collapse:
+    false_death: 0.15
+    heavy_glance: 0.15
+    panic_explosion: 0.15
+    phantom_fire: 0.15
+    false_inventory: 0.15

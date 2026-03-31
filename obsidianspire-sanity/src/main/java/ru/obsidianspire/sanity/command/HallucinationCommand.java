@@ -7,8 +7,14 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import ru.obsidianspire.sanity.ObsidianSpireSanity;
+import org.bukkit.command.TabCompleter;
 
-public class HallucinationCommand implements CommandExecutor {
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class HallucinationCommand implements CommandExecutor, TabCompleter {
     private final ObsidianSpireSanity plugin;
 
     public HallucinationCommand(ObsidianSpireSanity plugin) {
@@ -57,5 +63,46 @@ public class HallucinationCommand implements CommandExecutor {
         sender.sendMessage(ChatColor.GREEN + "Triggered hallucination '" + type + "' for " + target.getName() + ".");
 
         return true;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        if (!sender.hasPermission("obsidianspire.sanity.admin")) {
+            return new ArrayList<>();
+        }
+
+        if (args.length == 1) {
+            return Arrays.asList("trigger", "stop").stream()
+                    .filter(s -> s.startsWith(args[0].toLowerCase()))
+                    .collect(Collectors.toList());
+        }
+
+        if (args.length == 2) {
+            if (args[0].equalsIgnoreCase("trigger")) {
+                List<String> types = Arrays.asList(
+                    "phantom1", "phantom1_nightmare", "false_death", "heavy_glance",
+                    "chest_scream", "fake_steps", "phantom_fire",
+                    "panic_explosion", "echo_of_death", "false_inventory",
+                    "phantom_hunger", "flickering_torches", "eyes_in_the_crowd"
+                );
+                return types.stream()
+                        .filter(s -> s.startsWith(args[1].toLowerCase()))
+                        .collect(Collectors.toList());
+            } else if (args[0].equalsIgnoreCase("stop")) {
+                return Bukkit.getOnlinePlayers().stream()
+                        .map(Player::getName)
+                        .filter(s -> s.toLowerCase().startsWith(args[1].toLowerCase()))
+                        .collect(Collectors.toList());
+            }
+        }
+
+        if (args.length == 3 && args[0].equalsIgnoreCase("trigger")) {
+            return Bukkit.getOnlinePlayers().stream()
+                    .map(Player::getName)
+                    .filter(s -> s.toLowerCase().startsWith(args[2].toLowerCase()))
+                    .collect(Collectors.toList());
+        }
+
+        return new ArrayList<>();
     }
 }

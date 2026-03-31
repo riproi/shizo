@@ -50,6 +50,16 @@ public class SanityListener implements Listener {
     }
 
     @EventHandler
+    public void onPlayerRespawn(PlayerRespawnEvent event) {
+        if (plugin.getWipeEventManager().isWipeEventActive()) {
+            org.bukkit.World whiteRoom = org.bukkit.Bukkit.getWorld(plugin.getConfigManager().whiteRoomWorldName);
+            if (whiteRoom != null) {
+                event.setRespawnLocation(whiteRoom.getSpawnLocation());
+            }
+        }
+    }
+
+    @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
 
@@ -67,6 +77,10 @@ public class SanityListener implements Listener {
         // Save and unload data
         plugin.unloadPlayerData(player.getUniqueId());
         lastMoveTime.remove(player.getUniqueId());
+
+        if (plugin.getSanityTask() != null) {
+            plugin.getSanityTask().removePlayerFromDarkStare(player.getUniqueId());
+        }
     }
 
     @EventHandler
@@ -96,8 +110,8 @@ public class SanityListener implements Listener {
             if (stage.ordinal() >= ru.obsidianspire.sanity.manager.SanityManager.SanityStage.PSYCHOSIS.ordinal() && !data.isClozapineActive() && !data.isHaloperidolActive()) {
                 double chance = stage == ru.obsidianspire.sanity.manager.SanityManager.SanityStage.COLLAPSE ? 0.4 : 0.2;
                 if (Math.random() < chance) {
-                    event.setCancelled(true); // Don't let them sleep if phantom triggers
-                    plugin.getHallucinationManager().triggerSpecificHallucination(player, "phantom1");
+                    // Do NOT cancel the event, they need to get in bed to be woken up by the nightmare
+                    plugin.getHallucinationManager().triggerSpecificHallucination(player, "phantom1_nightmare");
                 }
             }
         }
@@ -111,11 +125,11 @@ public class SanityListener implements Listener {
                 PlayerData data = plugin.getPlayerData(player.getUniqueId());
                 if (data != null) {
                     if (player.isSleeping()) {
-                        data.addSanity(15.0);
+                        data.addSanity(plugin.getConfigManager().sanityHealSleep);
                     } else {
                         // Sleepless night
                         if (!data.isAminazineActive() && !data.isClozapineActive()) {
-                            data.removeSanity(5.0);
+                            data.removeSanity(plugin.getConfigManager().sanityDropInsomnia);
                         }
                     }
                 }
@@ -130,7 +144,7 @@ public class SanityListener implements Listener {
             if (event.getEntity().getType() == org.bukkit.entity.EntityType.ENDERMAN) {
                 PlayerData data = plugin.getPlayerData(player.getUniqueId());
                 if (data != null && !data.isAminazineActive() && !data.isClozapineActive()) {
-                    data.removeSanity(10.0);
+                    data.removeSanity(plugin.getConfigManager().sanityDropEnderman);
                     player.sendMessage("§5Чей-то взгляд проникает в ваш разум...");
                 }
             }
@@ -283,49 +297,9 @@ public class SanityListener implements Listener {
         if (data != null && data.isHallucinationActiveChestScream()) {
             if (event.getInventory().getType() == InventoryType.CHEST || event.getInventory().getType() == InventoryType.BARREL) {
                 // Play scream
-                player.playSound(player.getLocation(), org.bukkit.Sound.ENTITY_GHAST_SCREAM, 1.0f, 1.0f);
+                player.playSound(player.getLocation(), org.bukkit.Sound.ENTITY_GHAST_SCREAM, 1.0f, 0.5f);
 
-                // Use ProtocolLib to send WINDOW_ITEMS packet with fake rotten flesh
-                final int size = event.getInventory().getSize();
-                final ItemStack[] fakeItems = new ItemStack[size];
-                for (int i = 0; i < size; i++) {
-                    ItemStack realItem = event.getInventory().getItem(i);
-                    if (realItem != null && realItem.getType() != Material.AIR) {
-                        fakeItems[i] = new ItemStack(Material.ROTTEN_FLESH, realItem.getAmount());
-                    } else {
-                        fakeItems[i] = new ItemStack(Material.AIR);
-                    }
-                }
-
-                // Wait 1 tick for the client to actually open the window and get assigned an ID
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        if (player.getOpenInventory().getTopInventory().equals(event.getInventory())) {
-                            int windowId = player.getOpenInventory().getTopInventory().hashCode();
-                            // In Bukkit/Spigot, getting the actual protocol Window ID is difficult without NMS.
-                            // However, we can use ProtocolLib's container to send an UPDATE_WINDOW or just
-                            // use player.updateInventory() which sends the full inventory state.
-                            // Because Bukkit doesn't expose window ID safely, the absolute safest and most supported way
-                            // to visually replace items ONLY for this player without touching the actual Chest object
-                            // and avoiding ProtocolLib window ID mismatch crashes, is to use a Packet Listener for WINDOW_ITEMS.
-
-                            // Let's implement the WINDOW_ITEMS interceptor dynamically via ProtocolLib
-
-                            // To replace items, we send SET_SLOT manually for all slots
-                            try {
-                                // Since NMS Window ID is hard to get, we use ProtocolLib's abstraction:
-                                // Alternatively, we use Bukkit's player.sendEquipmentChange (not for chests).
-                                // Without NMS, we can use a pure ProtocolLib packet adapter instead.
-
-                                // To truly be safe, we will just register an adapter in the plugin's main class
-                                // that listens to Server.WINDOW_ITEMS and Server.SET_SLOT.
-                                // We tell the manager to activate the hallucination, and the adapter handles it.
-                            } catch (Exception e) {}
-                        }
-                    }
-                }.runTaskLater(plugin, 1L);
-
+                // Real items are hidden dynamically via ProtocolLib adapter registered in ObsidianSpireSanity
                 // Automatically stop after 1 second (this will tell the packet adapter to stop intercepting)
                 new BukkitRunnable() {
                     @Override
