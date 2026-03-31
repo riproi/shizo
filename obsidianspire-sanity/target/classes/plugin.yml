@@ -1,0 +1,23 @@
+name: ObsidianSpireSanity
+version: 1.0-SNAPSHOT
+main: ru.obsidianspire.sanity.ObsidianSpireSanity
+api-version: 1.21
+depend: [ProtocolLib]
+description: Sanity and Hallucination System for ObsidianSpire
+commands:
+  sanity:
+    description: Manage player sanity
+    usage: /sanity <set|add|remove|get|wipe_event> <player> [value]
+    permission: obsidianspire.sanity.admin
+  gh:
+    description: Trigger hallucinations manually
+    usage: /gh <trigger|stop> [type] <player>
+    permission: obsidianspire.sanity.admin
+  meds:
+    description: Manage medications
+    usage: /meds <give|stats> <type> <player>
+    permission: obsidianspire.sanity.admin
+permissions:
+  obsidianspire.sanity.admin:
+    description: Allows admin commands for Sanity plugin
+    default: op
