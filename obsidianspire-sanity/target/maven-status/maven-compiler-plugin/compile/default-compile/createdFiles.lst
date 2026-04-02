@@ -1,6 +1,7 @@
 ru/obsidianspire/sanity/config/ConfigManager.class
 ru/obsidianspire/sanity/hallucination/EyesInTheCrowdHallucination.class
 ru/obsidianspire/sanity/command/HallucinationCommand.class
+ru/obsidianspire/sanity/hallucination/Phantom1NightmareHallucination$1$1.class
 ru/obsidianspire/sanity/manager/MedicineManager$MedicineType.class
 ru/obsidianspire/sanity/hallucination/Phantom1PursuitHallucination$2.class
 ru/obsidianspire/sanity/hallucination/PhantomFireHallucination.class
@@ -16,6 +17,7 @@ ru/obsidianspire/sanity/listener/SanityListener$1.class
 ru/obsidianspire/sanity/data/PlayerData.class
 ru/obsidianspire/sanity/hallucination/FakeStepsHallucination.class
 ru/obsidianspire/sanity/hallucination/Phantom1NightmareHallucination$1.class
+ru/obsidianspire/sanity/hallucination/Phantom1PursuitHallucination$3.class
 ru/obsidianspire/sanity/data/SQLiteProvider.class
 ru/obsidianspire/sanity/command/MedicineCommand.class
 ru/obsidianspire/sanity/hallucination/FalseDeathHallucination$1.class
@@ -26,7 +28,6 @@ ru/obsidianspire/sanity/manager/SanityManager.class
 ru/obsidianspire/sanity/hallucination/FlickeringTorchesHallucination$1$1.class
 ru/obsidianspire/sanity/hallucination/EyesInTheCrowdHallucination$1.class
 ru/obsidianspire/sanity/listener/SanityListener.class
-ru/obsidianspire/sanity/hallucination/Phantom1PursuitHallucination$1$1.class
 ru/obsidianspire/sanity/hallucination/PhantomHungerHallucination$1.class
 ru/obsidianspire/sanity/hallucination/PhantomFireHallucination$1.class
 ru/obsidianspire/sanity/hallucination/FalseDeathHallucination.class
@@ -47,3 +48,4 @@ ru/obsidianspire/sanity/hallucination/ChestScreamHallucination.class
 ru/obsidianspire/sanity/hallucination/PanicExplosionHallucination.class
 ru/obsidianspire/sanity/listener/SanityListener$2.class
 ru/obsidianspire/sanity/hallucination/Phantom1PursuitHallucination$1.class
+ru/obsidianspire/sanity/hallucination/Phantom1NightmareHallucination$1$1$1.class

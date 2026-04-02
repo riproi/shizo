@@ -9,6 +9,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import ru.obsidianspire.sanity.ObsidianSpireSanity;
@@ -32,6 +33,7 @@ public class Phantom1NightmareHallucination extends Hallucination {
         phantomEntity.setInvulnerable(true);
         phantomEntity.setSilent(true);
         phantomEntity.getEquipment().clear();
+        phantomEntity.setMetadata("hallucination_phantom", new FixedMetadataValue(plugin, true));
 
         org.bukkit.attribute.AttributeInstance damageAttr = phantomEntity.getAttribute(org.bukkit.attribute.Attribute.GENERIC_ATTACK_DAMAGE);
         if (damageAttr != null) {
@@ -59,10 +61,27 @@ public class Phantom1NightmareHallucination extends Hallucination {
                     // Wake up
                     player.wakeup(true);
 
-                    // Effects
-                    player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 200, 0)); // 10s Blindness
-                    player.playSound(player.getLocation(), Sound.MUSIC_DISC_13, 1.0f, 0.5f);
-                    player.sendTitle(plugin.getConfigManager().textPhantom1Nightmare, "", 10, 200, 10); // 10s title
+                    // Delay effects slightly to ensure they are applied after waking up
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            if (player.isOnline()) {
+                                player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 200, 0)); // 10s Blindness I
+                                player.playSound(player.getLocation(), Sound.MUSIC_DISC_13, 1.0f, 0.5f);
+                                player.sendTitle(plugin.getConfigManager().textPhantom1Nightmare, "", 10, 200, 10); // 10s title
+
+                                // Schedule sound stop
+                                new BukkitRunnable() {
+                                    @Override
+                                    public void run() {
+                                        if (player.isOnline()) {
+                                            player.stopSound(Sound.MUSIC_DISC_13);
+                                        }
+                                    }
+                                }.runTaskLater(plugin, 200L); // 10 seconds
+                            }
+                        }
+                    }.runTaskLater(plugin, 1L); // 1 tick later
                 }
                 stop();
             }
