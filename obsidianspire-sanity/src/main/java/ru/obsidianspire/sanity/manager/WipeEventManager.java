@@ -19,7 +19,7 @@ public class WipeEventManager {
 
     public WipeEventManager(ObsidianSpireSanity plugin) {
         this.plugin = plugin;
-        this.isWipeEventActive = plugin.getDataProvider().loadWipeStatus();
+        this.isWipeEventActive = plugin.getConfigManager().wipeEventActive;
 
         if (this.isWipeEventActive) {
             setupWhiteRoom();
@@ -34,7 +34,10 @@ public class WipeEventManager {
         if (isWipeEventActive) return;
 
         isWipeEventActive = true;
-        plugin.getDataProvider().saveWipeStatus(true);
+        plugin.getConfig().set("wipe_event.wipe_event_active", true);
+        plugin.saveConfig();
+        plugin.getConfigManager().wipeEventActive = true;
+
         setupWhiteRoom();
 
         // Start sequence for online players
