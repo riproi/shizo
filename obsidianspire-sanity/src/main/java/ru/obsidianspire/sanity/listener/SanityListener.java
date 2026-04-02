@@ -46,6 +46,13 @@ public class SanityListener implements Listener {
     }
 
     @EventHandler
+    public void onEntityDamage(EntityDamageEvent event) {
+        if (event.getEntity().hasMetadata("hallucination_phantom")) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         plugin.getPlayerData(player.getUniqueId()); // Load or create data

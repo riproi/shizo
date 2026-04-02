@@ -32,6 +32,7 @@ public class Phantom1NightmareHallucination extends Hallucination {
         phantomEntity.setCustomNameVisible(false);
         phantomEntity.setInvulnerable(true);
         phantomEntity.setSilent(true);
+        phantomEntity.setShouldBurnInDay(false);
         phantomEntity.getEquipment().clear();
         phantomEntity.setMetadata("hallucination_phantom", new FixedMetadataValue(plugin, true));
 

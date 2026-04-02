@@ -35,6 +35,7 @@ public class Phantom1PursuitHallucination extends Hallucination {
         phantomEntity.setCustomNameVisible(false);
         phantomEntity.setInvulnerable(true);
         phantomEntity.setSilent(true);
+        phantomEntity.setShouldBurnInDay(false);
         phantomEntity.getEquipment().clear();
         phantomEntity.setMetadata("hallucination_phantom", new FixedMetadataValue(plugin, true));
 
@@ -100,10 +101,16 @@ public class Phantom1PursuitHallucination extends Hallucination {
                 // Check if player is looking at Phantom
                 if (distance <= 20 && hasLineOfSight) {
                     Location eye = player.getEyeLocation();
-                    org.bukkit.util.Vector toEntity = phantomEntity.getLocation().toVector().subtract(eye.toVector());
+                    // Check middle of entity for better dot product
+                    Location entityCenter = phantomEntity.getLocation().add(0, phantomEntity.getHeight() / 2, 0);
+                    org.bukkit.util.Vector toEntity = entityCenter.toVector().subtract(eye.toVector());
                     double dot = toEntity.normalize().dot(eye.getDirection());
 
-                    if (dot > 0.95) { // Looking almost directly at
+                    // Check if targeted with Bukkit RayTrace or wide dot product (0.7 is around 45 degrees field of view)
+                    org.bukkit.entity.Entity target = player.getTargetEntity(20, false);
+                    boolean isTargeting = (target != null && target.getEntityId() == phantomEntity.getEntityId());
+
+                    if (dot > 0.75 || isTargeting) { // Looking at it
                         stareTicks += 5;
                         if (stareTicks >= 20) { // 1 second
                             isLockingSequence = true;
