@@ -68,6 +68,9 @@ public class HallucinationManager {
         if (hallucination != null) {
             hallucination.trigger();
             activeHallucinations.computeIfAbsent(player.getUniqueId(), k -> new ArrayList<>()).add(hallucination);
+            if (plugin.getConfigManager().debug) {
+                plugin.getLogger().info("[Debug] Triggered hallucination '" + type + "' for player " + player.getName());
+            }
         }
     }
 

@@ -41,8 +41,9 @@ public class SanityTask extends BukkitRunnable {
                 }
             }
 
-            // 4. Staring into darkness 3+ minutes (-2% per 3 mins)
-            if (player.getLocation().getBlock().getLightLevel() < 7) {
+            // 4. Staring into darkness 3+ minutes (-2% per 3 mins), and Light source healing (+3% per 5 mins in >= 10 light)
+            int lightLevel = player.getLocation().getBlock().getLightLevel();
+            if (lightLevel < 7) {
                 Long darkStart = darkStareStart.get(player.getUniqueId());
                 if (darkStart == null) {
                     darkStareStart.put(player.getUniqueId(), System.currentTimeMillis());
@@ -54,6 +55,20 @@ public class SanityTask extends BukkitRunnable {
                 }
             } else {
                 darkStareStart.remove(player.getUniqueId());
+            }
+
+            if (lightLevel >= 10) {
+                Long lightStart = lightHealStart.get(player.getUniqueId());
+                if (lightStart == null) {
+                    lightHealStart.put(player.getUniqueId(), System.currentTimeMillis());
+                } else if (System.currentTimeMillis() - lightStart >= 300000) { // 5 minutes
+                    if (data != null) {
+                        data.addSanity(plugin.getConfigManager().sanityHealLightSource);
+                        lightHealStart.put(player.getUniqueId(), System.currentTimeMillis()); // reset
+                    }
+                }
+            } else {
+                lightHealStart.remove(player.getUniqueId());
             }
 
             // 5. Tolerance Decay (1 level per 2 hours of not using)
@@ -78,9 +93,14 @@ public class SanityTask extends BukkitRunnable {
     }
 
     private final java.util.Map<java.util.UUID, Long> darkStareStart = new java.util.HashMap<>();
+    private final java.util.Map<java.util.UUID, Long> lightHealStart = new java.util.HashMap<>();
 
     public void removePlayerFromDarkStare(java.util.UUID uuid) {
         darkStareStart.remove(uuid);
+    }
+
+    public void removePlayerFromLightHeal(java.util.UUID uuid) {
+        lightHealStart.remove(uuid);
     }
 
     private void triggerRandomHallucinationFor(Player player, SanityManager.SanityStage stage) {
