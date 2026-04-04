@@ -12,10 +12,13 @@ sanity:
   heals:
     healthy_sleep: 15.0
     group_therapy_per_min: 5.0
+    light_source_5min: 3.0
 
 texts:
   phantom1_pursuit: "§cЭто всего лишь сон..."
   phantom1_nightmare: "§cТолько не снова..."
+
+debug: false
 
 chances:
   psychosis:

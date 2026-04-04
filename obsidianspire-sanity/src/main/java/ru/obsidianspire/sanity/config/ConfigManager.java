@@ -19,6 +19,7 @@ public class ConfigManager {
     // Healing rates
     public double sanityHealSleep;
     public double sanityHealGroupTherapy;
+    public double sanityHealLightSource;
 
     // Text & Messages
     public String textPhantom1Pursuit;
@@ -36,6 +37,8 @@ public class ConfigManager {
     public double chanceCollapsePanicExplosion;
     public double chanceCollapsePhantomFire;
     public double chanceCollapseFalseInventory;
+
+    public boolean debug;
 
     public ConfigManager(ObsidianSpireSanity plugin) {
         this.plugin = plugin;
@@ -58,6 +61,7 @@ public class ConfigManager {
 
         sanityHealSleep = config.getDouble("sanity.heals.healthy_sleep", 15.0);
         sanityHealGroupTherapy = config.getDouble("sanity.heals.group_therapy_per_min", 5.0);
+        sanityHealLightSource = config.getDouble("sanity.heals.light_source_5min", 3.0);
 
         textPhantom1Pursuit = config.getString("texts.phantom1_pursuit", "§cЭто всего лишь сон...");
         textPhantom1Nightmare = config.getString("texts.phantom1_nightmare", "§cТолько не снова...");
@@ -73,5 +77,7 @@ public class ConfigManager {
         chanceCollapsePanicExplosion = config.getDouble("chances.collapse.panic_explosion", 0.15);
         chanceCollapsePhantomFire = config.getDouble("chances.collapse.phantom_fire", 0.15);
         chanceCollapseFalseInventory = config.getDouble("chances.collapse.false_inventory", 0.15);
+
+        debug = config.getBoolean("debug", false);
     }
 }
