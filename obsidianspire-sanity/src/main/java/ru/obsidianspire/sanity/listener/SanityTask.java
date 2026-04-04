@@ -56,6 +56,21 @@ public class SanityTask extends BukkitRunnable {
                 darkStareStart.remove(player.getUniqueId());
             }
 
+            // 4.5. Standing in light 10+ for 5+ minutes (+3% per 5 mins)
+            if (player.getLocation().getBlock().getLightLevel() >= 10) {
+                Long lightStartTime = lightStart.get(player.getUniqueId());
+                if (lightStartTime == null) {
+                    lightStart.put(player.getUniqueId(), System.currentTimeMillis());
+                } else if (System.currentTimeMillis() - lightStartTime >= 300000) { // 5 minutes
+                    if (data != null) {
+                        data.addSanity(plugin.getConfigManager().sanityHealLight);
+                        lightStart.put(player.getUniqueId(), System.currentTimeMillis()); // reset
+                    }
+                }
+            } else {
+                lightStart.remove(player.getUniqueId());
+            }
+
             // 5. Tolerance Decay (1 level per 2 hours of not using)
             if (data != null) {
                 long now = System.currentTimeMillis();
@@ -78,9 +93,11 @@ public class SanityTask extends BukkitRunnable {
     }
 
     private final java.util.Map<java.util.UUID, Long> darkStareStart = new java.util.HashMap<>();
+    private final java.util.Map<java.util.UUID, Long> lightStart = new java.util.HashMap<>();
 
     public void removePlayerFromDarkStare(java.util.UUID uuid) {
         darkStareStart.remove(uuid);
+        lightStart.remove(uuid);
     }
 
     private void triggerRandomHallucinationFor(Player player, SanityManager.SanityStage stage) {
