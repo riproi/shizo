@@ -6,6 +6,7 @@ import ru.obsidianspire.sanity.ObsidianSpireSanity;
 public class ConfigManager {
     private final ObsidianSpireSanity plugin;
 
+    public boolean debugMode;
     public String whiteRoomWorldName;
 
     // Sanity drop rates
@@ -19,6 +20,7 @@ public class ConfigManager {
     // Healing rates
     public double sanityHealSleep;
     public double sanityHealGroupTherapy;
+    public double sanityHealLight;
 
     // Text & Messages
     public String textPhantom1Pursuit;
@@ -47,6 +49,7 @@ public class ConfigManager {
         plugin.reloadConfig();
         FileConfiguration config = plugin.getConfig();
 
+        debugMode = config.getBoolean("debug", false);
         whiteRoomWorldName = config.getString("wipe_event.world_name", "sanity_white_room");
 
         sanityDropDarkness = config.getDouble("sanity.drops.darkness_per_min", 1.0);
@@ -58,6 +61,7 @@ public class ConfigManager {
 
         sanityHealSleep = config.getDouble("sanity.heals.healthy_sleep", 15.0);
         sanityHealGroupTherapy = config.getDouble("sanity.heals.group_therapy_per_min", 5.0);
+        sanityHealLight = config.getDouble("sanity.heals.light_5min", 3.0);
 
         textPhantom1Pursuit = config.getString("texts.phantom1_pursuit", "§cЭто всего лишь сон...");
         textPhantom1Nightmare = config.getString("texts.phantom1_nightmare", "§cТолько не снова...");

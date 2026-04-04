@@ -314,6 +314,7 @@ public class SanityListener implements Listener {
                     public void run() {
                         if (player.isOnline()) {
                             plugin.getHallucinationManager().stopSpecific(player, "chest_scream");
+                            player.closeInventory();
                             player.updateInventory(); // Force client to resync and show real items
                         }
                     }

@@ -16,19 +16,16 @@ public class PhantomFireHallucination extends Hallucination {
     public void trigger() {
         if (!player.isOnline() || player.isDead()) return;
 
-        // Visual fire effect (Fire ticks)
-        int originalFireTicks = player.getFireTicks();
-        player.setFireTicks(60); // 3 seconds
+        // Visual fire effect
+        player.setVisualFire(true); // 3 seconds
         player.playSound(player.getLocation(), Sound.BLOCK_FIRE_AMBIENT, 1.0f, 1.0f);
 
-        // Schedule removal of fire ticks if they haven't actually been set on fire
+        // Schedule removal of visual fire
         new BukkitRunnable() {
             @Override
             public void run() {
                 if (player.isOnline()) {
-                    if (originalFireTicks <= 0) {
-                        player.setFireTicks(0);
-                    }
+                    player.setVisualFire(false);
                 }
             }
         }.runTaskLater(plugin, 60L);
@@ -37,7 +34,7 @@ public class PhantomFireHallucination extends Hallucination {
     @Override
     public void stop() {
         if (player.isOnline()) {
-            player.setFireTicks(0);
+            player.setVisualFire(false);
         }
     }
 }
