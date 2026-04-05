@@ -1,5 +1,6 @@
 wipe_event:
   world_name: "sanity_white_room"
+  wipe_event_active: false
 
 sanity:
   drops:
@@ -13,6 +14,7 @@ sanity:
     healthy_sleep: 15.0
     group_therapy_per_min: 5.0
     light_source_5min: 3.0
+    light_5min: 3.0
 
 texts:
   phantom1_pursuit: "§cЭто всего лишь сон..."

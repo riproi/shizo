@@ -6,7 +6,9 @@ import ru.obsidianspire.sanity.ObsidianSpireSanity;
 public class ConfigManager {
     private final ObsidianSpireSanity plugin;
 
+    public boolean debugMode;
     public String whiteRoomWorldName;
+    public boolean wipeEventActive;
 
     // Sanity drop rates
     public double sanityDropDarkness;
@@ -50,7 +52,9 @@ public class ConfigManager {
         plugin.reloadConfig();
         FileConfiguration config = plugin.getConfig();
 
+        debugMode = config.getBoolean("debug", false);
         whiteRoomWorldName = config.getString("wipe_event.world_name", "sanity_white_room");
+        wipeEventActive = config.getBoolean("wipe_event.wipe_event_active", false);
 
         sanityDropDarkness = config.getDouble("sanity.drops.darkness_per_min", 1.0);
         sanityDropIsolation = config.getDouble("sanity.drops.isolation_per_10min", 5.0);

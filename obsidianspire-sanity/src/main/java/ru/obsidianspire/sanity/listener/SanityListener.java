@@ -29,10 +29,15 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.List;
 import java.util.ArrayList;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.NamespacedKey;
+import org.bukkit.persistence.PersistentDataType;
 
 public class SanityListener implements Listener {
     private final ObsidianSpireSanity plugin;
     private final Map<UUID, Long> lastMoveTime = new HashMap<>();
+    private final Map<UUID, Long> lastDeviceUseTime = new HashMap<>();
 
     public SanityListener(ObsidianSpireSanity plugin) {
         this.plugin = plugin;
@@ -175,7 +180,52 @@ public class SanityListener implements Listener {
                     // Consume logic handled by PlayerItemConsumeEvent
                 }
             }
+
+            // Medical Device Logic
+            if (player.isSneaking() && item.getType() == Material.DRIED_KELP) {
+                if (item.hasItemMeta() && item.getItemMeta().getPersistentDataContainer().has(new NamespacedKey(plugin, "medical_device"), PersistentDataType.BYTE)) {
+                    long currentTime = System.currentTimeMillis();
+                    long lastUse = lastDeviceUseTime.getOrDefault(player.getUniqueId(), 0L);
+
+                    if (currentTime - lastUse >= 5 * 60 * 1000) { // 5 minutes cooldown
+                        lastDeviceUseTime.put(player.getUniqueId(), currentTime);
+                        PlayerData data = plugin.getPlayerData(player.getUniqueId());
+                        if (data != null) {
+                            runDeviceAnimation(player, data.getSanity());
+                        }
+                    } else {
+                        long remaining = (5 * 60 * 1000 - (currentTime - lastUse)) / 1000;
+                        player.sendMessage("§cУстройство перезаряжается... Осталось " + remaining + " секунд.");
+                    }
+                }
+            }
         }
+    }
+
+    private void runDeviceAnimation(Player player, double sanity) {
+        new BukkitRunnable() {
+            int step = 0;
+            @Override
+            public void run() {
+                if (!player.isOnline()) {
+                    this.cancel();
+                    return;
+                }
+
+                if (step == 0) {
+                    player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText("§7Устройство издаёт писк."));
+                } else if (step == 1) {
+                    player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText("§7Устройство издаёт писк.."));
+                } else if (step == 2) {
+                    player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText("§7Устройство издаёт писк..."));
+                } else if (step == 3) {
+                    int sanityPercentage = (int) Math.round(sanity);
+                    player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText("§7Ваш рассудок: " + sanityPercentage + "%"));
+                    this.cancel();
+                }
+                step++;
+            }
+        }.runTaskTimer(plugin, 0L, 10L); // Execute every 10 ticks (0.5 seconds)
     }
 
     @EventHandler
@@ -315,6 +365,7 @@ public class SanityListener implements Listener {
                     public void run() {
                         if (player.isOnline()) {
                             plugin.getHallucinationManager().stopSpecific(player, "chest_scream");
+                            player.closeInventory();
                             player.updateInventory(); // Force client to resync and show real items
                         }
                     }
