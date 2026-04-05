@@ -69,6 +69,9 @@ public class HallucinationManager {
             if (plugin.getConfigManager().debugMode) {
                 plugin.getLogger().info("[Debug] Применена галлюцинация " + type + " к игроку " + player.getName());
             }
+            if (plugin.getConfigManager().debug) {
+                plugin.getLogger().info("[Debug] Triggered hallucination '" + type + "' for player " + player.getName());
+            }
             hallucination.trigger();
             activeHallucinations.computeIfAbsent(player.getUniqueId(), k -> new ArrayList<>()).add(hallucination);
         }

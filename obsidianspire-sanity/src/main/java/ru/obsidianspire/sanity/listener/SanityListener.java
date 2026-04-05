@@ -93,6 +93,7 @@ public class SanityListener implements Listener {
 
         if (plugin.getSanityTask() != null) {
             plugin.getSanityTask().removePlayerFromDarkStare(player.getUniqueId());
+            plugin.getSanityTask().removePlayerFromLightHeal(player.getUniqueId());
         }
     }
 
