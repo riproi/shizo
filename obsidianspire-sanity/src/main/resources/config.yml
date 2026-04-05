@@ -2,6 +2,7 @@ debug: false
 
 wipe_event:
   world_name: "sanity_white_room"
+  wipe_event_active: false
 
 sanity:
   drops:

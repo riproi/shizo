@@ -58,9 +58,6 @@ public class MedicineManager {
         meta.setDisplayName(type.getName());
         List<String> lore = new ArrayList<>();
 
-        // Set NBT data to prevent anvil renaming exploit
-        meta.getPersistentDataContainer().set(medicineKey, PersistentDataType.STRING, type.name());
-
         switch (type) {
             case AMINAZINE:
                 meta.setBasePotionType(PotionType.MUNDANE);
@@ -80,12 +77,20 @@ public class MedicineManager {
                 lore.add(ChatColor.GRAY + "+20% рассудка.");
                 break;
             case HERBAL_TEA:
+                // We need an ItemMeta for MUSHROOM_STEW, not PotionMeta
                 item.setType(Material.MUSHROOM_STEW);
-                meta = (PotionMeta) Bukkit.getItemFactory().getItemMeta(Material.POTION); // Just for color if needed, but mushroom stew doesn't use it.
-                lore.add(ChatColor.GRAY + "+5% рассудка.");
-                break;
+                org.bukkit.inventory.meta.ItemMeta stewMeta = Bukkit.getItemFactory().getItemMeta(Material.MUSHROOM_STEW);
+                if (stewMeta != null) {
+                    stewMeta.setDisplayName(type.getName());
+                    stewMeta.getPersistentDataContainer().set(medicineKey, PersistentDataType.STRING, type.name());
+                    lore.add(ChatColor.GRAY + "+5% рассудка.");
+                    stewMeta.setLore(lore);
+                    item.setItemMeta(stewMeta);
+                }
+                return item;
         }
 
+        meta.getPersistentDataContainer().set(medicineKey, PersistentDataType.STRING, type.name());
         meta.setLore(lore);
         item.setItemMeta(meta);
         return item;

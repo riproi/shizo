@@ -106,33 +106,6 @@ public class SQLiteProvider implements DataProvider {
     }
 
     @Override
-    public void saveWipeStatus(boolean active) {
-        String sql = "INSERT OR REPLACE INTO server_data (key, value) VALUES (?, ?)";
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, "wipe_event_active");
-            statement.setString(2, String.valueOf(active));
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            plugin.getLogger().log(Level.SEVERE, "Failed to save wipe status", e);
-        }
-    }
-
-    @Override
-    public boolean loadWipeStatus() {
-        String sql = "SELECT value FROM server_data WHERE key = ?";
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, "wipe_event_active");
-            ResultSet rs = statement.executeQuery();
-            if (rs.next()) {
-                return Boolean.parseBoolean(rs.getString("value"));
-            }
-        } catch (SQLException e) {
-            plugin.getLogger().log(Level.SEVERE, "Failed to load wipe status", e);
-        }
-        return false;
-    }
-
-    @Override
     public void close() {
         try {
             if (connection != null && !connection.isClosed()) {

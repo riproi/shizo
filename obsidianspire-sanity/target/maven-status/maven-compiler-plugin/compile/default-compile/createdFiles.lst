@@ -30,6 +30,7 @@ ru/obsidianspire/sanity/hallucination/EyesInTheCrowdHallucination$1.class
 ru/obsidianspire/sanity/listener/SanityListener.class
 ru/obsidianspire/sanity/hallucination/PhantomHungerHallucination$1.class
 ru/obsidianspire/sanity/hallucination/PhantomFireHallucination$1.class
+ru/obsidianspire/sanity/listener/SanityListener$3.class
 ru/obsidianspire/sanity/hallucination/FalseDeathHallucination.class
 ru/obsidianspire/sanity/manager/WipeEventManager$1.class
 ru/obsidianspire/sanity/hallucination/Phantom1NightmareHallucination.class

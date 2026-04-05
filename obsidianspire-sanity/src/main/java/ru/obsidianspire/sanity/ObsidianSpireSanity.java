@@ -75,6 +75,20 @@ public class ObsidianSpireSanity extends JavaPlugin {
         teaRecipe.addIngredient(Material.OXEYE_DAISY);
         getServer().addRecipe(teaRecipe);
 
+        // Register Recipe for Medical Device
+        NamespacedKey deviceKey = new NamespacedKey(this, "medical_device");
+        ItemStack deviceItem = new ItemStack(Material.DRIED_KELP);
+        org.bukkit.inventory.meta.ItemMeta deviceMeta = deviceItem.getItemMeta();
+        if (deviceMeta != null) {
+            deviceMeta.setDisplayName("§k12345");
+            deviceMeta.getPersistentDataContainer().set(new NamespacedKey(this, "medical_device"), org.bukkit.persistence.PersistentDataType.BYTE, (byte) 1);
+            deviceItem.setItemMeta(deviceMeta);
+        }
+        ShapelessRecipe deviceRecipe = new ShapelessRecipe(deviceKey, deviceItem);
+        deviceRecipe.addIngredient(Material.REDSTONE);
+        deviceRecipe.addIngredient(Material.STICK);
+        getServer().addRecipe(deviceRecipe);
+
         getLogger().info("ObsidianSpire Sanity Plugin has been enabled!");
     }
 
